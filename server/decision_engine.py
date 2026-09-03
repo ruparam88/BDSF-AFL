@@ -275,11 +275,41 @@ class JointDecisionEngine:
                 }
             )
 
+        # Option A: Dynamic TRS Thresholding based on spatial_coherence
+        if spatial_ev.spatial_coherence is not None:
+            coh = max(0.0, min(1.0, spatial_ev.spatial_coherence))
+            dynamic_trs_reject_thresh = 0.95 - 0.15 * coh
+        else:
+            dynamic_trs_reject_thresh = self.trs_reject_thresh
+
         # ---------------------------------------------------------------------
         # PRIORITY 3: Trajectory Rigidity Rejection (Primary Mimicry/Compound Defense)
         # ---------------------------------------------------------------------
         # Triggers when update is out of consensus or anomalous AND exhibits rigid directional steering
-        if trs is not None and trs >= self.trs_reject_thresh and depth >= self.trs_min_depth:
+        if trs is not None and trs >= dynamic_trs_reject_thresh and depth >= self.trs_min_depth:
+            # Option C: Multi-Metric Fallthrough Exception
+            if prc is not None and prc >= 0.20 and tra is not None and tra >= 0.45 and S_i < 0.30:
+                return JointDecisionOutcome(
+                    action="DOWNWEIGHT",
+                    primary_reason="TRAJECTORY_RIGIDITY_FALLTHROUGH_DOWNWEIGHT",
+                    aggregation_weight=self.alpha_downweight * (I_i * P_i) * staleness_factor,
+                    force_sync_required=False,
+                    diagnostic_features={
+                        "priority": 3,
+                        "trs_score": trs,
+                        "gdv_score": gdv,
+                        "dbp_score": dbp,
+                        "depth": depth,
+                        "suspicion_score": S_i,
+                        "sim_g": sim_g,
+                        "version_lag": v_lag,
+                        "sim_frozen_anchor": sim_frozen,
+                        "anchor_drift": drift_a,
+                        "prc_score": prc,
+                        "tra_score": tra,
+                    }
+                )
+            
             return JointDecisionOutcome(
                 action="REJECT",
                 primary_reason="TRAJECTORY_RIGIDITY_REJECT",
@@ -415,7 +445,7 @@ class JointDecisionEngine:
         # ---------------------------------------------------------------------
         # PRIORITY 6: Adversarial / Inconsistent Fallthrough (REJECT & SLASH)
         # ---------------------------------------------------------------------
-        if trs is not None and trs >= self.trs_reject_thresh:
+        if trs is not None and trs >= dynamic_trs_reject_thresh:
             primary_reason = "TRAJECTORY_RIGIDITY_REJECT"
         elif S_i >= self.suspicion_reject_thresh:
             primary_reason = "PROGRESSIVE_SUSPICION_TRAJECTORY_REJECT"
