@@ -139,7 +139,9 @@ class JointDecisionEngine:
                 }
             )
 
-        if C_t is not None and np.isfinite(C_t) and C_t > 1e-9 and norm_r > 3.0 * C_t:
+        C_t_eff = max(C_t, 0.10) if C_t is not None else None
+        
+        if C_t_eff is not None and np.isfinite(C_t_eff) and norm_r > 3.0 * C_t_eff:
             return JointDecisionOutcome(
                 action="REJECT",
                 primary_reason="HARD_GUARD_NORM_EXPLOSION",
