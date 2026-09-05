@@ -143,7 +143,7 @@ class ClientBehavioralProfile:
             return None
         vecs = [v.float() for v in self.gradient_memory]
         sims = [torch.dot(vecs[i], vecs[i+1]).item() for i in range(len(vecs)-1)]
-        return float(np.std(sims))
+        return float(np.std(sims, ddof=1))
 
     def compute_dbp(self) -> Optional[float]:
         """Mean all-pairs cosine similarity within gradient_memory. Requires depth >= 3."""

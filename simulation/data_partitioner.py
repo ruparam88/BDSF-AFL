@@ -121,7 +121,7 @@ class DataPartitioner:
                 subset,
                 batch_size=self.batch_size,
                 shuffle=True,
-                drop_last=True,
+                drop_last=False,
                 num_workers=0,      # no subprocess workers — eliminates 40-worker CPU spike
                 pin_memory=_PIN_MEMORY,  # enables fast CPU→GPU page-locked transfers
                 persistent_workers=False,

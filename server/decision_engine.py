@@ -290,7 +290,12 @@ class JointDecisionEngine:
         # Triggers when update is out of consensus or anomalous AND exhibits rigid directional steering
         if trs is not None and trs >= dynamic_trs_reject_thresh and depth >= self.trs_min_depth:
             # Option C: Multi-Metric Fallthrough Exception
-            if prc is not None and prc >= 0.20 and tra is not None and tra >= 0.45 and S_i < 0.30:
+            sim_a = behavioral_ev.sim_anchor
+            is_minority_consistent = (sim_a is not None and sim_a >= self.theta_anchor_min)
+            is_self_consistent = (sim_s is not None and sim_s >= self.theta_self)
+            
+            if (prc is not None and prc >= 0.20 and tra is not None and tra >= 0.45 and S_i < 0.30) or \
+               (is_minority_consistent and is_self_consistent and S_i < 0.30):
                 return JointDecisionOutcome(
                     action="DOWNWEIGHT",
                     primary_reason="TRAJECTORY_RIGIDITY_FALLTHROUGH_DOWNWEIGHT",
