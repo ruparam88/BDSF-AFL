@@ -101,6 +101,6 @@ delta_borderline: 0.05            # Spatial margin around theta_cos for quaranti
 trusted_integrity_min: 0.80       # Minimum integrity score I_i for moderate temporal quarantine
 
 # Attack simulation
-byz_fraction: 0.2        # 0.1 | 0.2 | 0.3; 0.5 for boundary test
+byz_fraction: 0.5        # 0.1 | 0.2 | 0.3; 0.5 for boundary test
 attack_type: "COMPOUND"  # T1_HIGH_FREQ | T2_STRAGGLER | S1_POISON |
                          # S2_MIMICRY | ADAPTIVE | COMPOUND
