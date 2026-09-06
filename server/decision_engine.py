@@ -295,7 +295,7 @@ class JointDecisionEngine:
             is_self_consistent = (sim_s is not None and sim_s >= self.theta_self)
             
             if (prc is not None and prc >= 0.20 and tra is not None and tra >= 0.45 and S_i < 0.30) or \
-               (is_minority_consistent and is_self_consistent and S_i < 0.30):
+               (is_minority_consistent and is_self_consistent):
                 return JointDecisionOutcome(
                     action="DOWNWEIGHT",
                     primary_reason="TRAJECTORY_RIGIDITY_FALLTHROUGH_DOWNWEIGHT",
@@ -353,8 +353,8 @@ class JointDecisionEngine:
             sim_s is not None and sim_s >= theta_self_eff and
             is_anchor_valid_p4 and is_drift_bounded and is_temporal_tolerable and is_trs_tolerable):
             
-            # Persistent multi-round suspicion triggers soft reject
-            if S_i >= self.suspicion_reject_thresh and (trs is None or trs >= 0.72):
+            # Persistent multi-round suspicion triggers soft reject unless verified as honest non-IID
+            if S_i >= self.suspicion_reject_thresh and (trs is None or trs >= 0.72) and not is_minority_consistent:
                 primary_reason = "TEMPORAL_RESIDUAL_INCOHERENCE_REJECT" if trs is None else "PROGRESSIVE_SUSPICION_TRAJECTORY_REJECT"
                 return JointDecisionOutcome(
                     action="REJECT",

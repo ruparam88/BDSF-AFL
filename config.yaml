@@ -13,7 +13,7 @@ dirichlet_alpha: 0.5     # 0.1=heterogeneous | 0.5=moderate | .inf=IID
 batch_size: 32
 
 # Client training
-local_epochs: 1              # single-epoch local steps to minimize non-IID client drift
+local_epochs: 3              # single-epoch local steps to minimize non-IID client drift
 local_lr: 0.01
 lr_schedule: "cosine"        # dynamic learning rate: cosine annealing from 0.01 -> 0.001
 lr_min: 0.001
@@ -23,8 +23,8 @@ lognormal_sigma: 1.0
 fedprox_mu: 0.01             # proximal regularization to bound non-IID trajectory deviation
 
 # Server aggregation & Optimization (Phase 5)
-eta: 0.01                   # calibrated server learning rate for asynchronous aggregation
-server_momentum: 0.90       # Momentum-enhanced asynchronous aggregation (FedAvgM beta_m=0.90)
+eta: 0.5                   # calibrated server learning rate for asynchronous aggregation
+server_momentum: 0.95       # Momentum-enhanced asynchronous aggregation (FedAvgM beta_m=0.90)
 model_architecture: "resnet18"       # resnet18 (CIFAR-10 Adapted) | cnn (Legacy baseline) | mlp (MNIST)
 early_stopping: false                # Automated convergence stopping
 early_stopping_patience: 10          # Consecutive evaluations without gain before early stopping (10 evals = 100 rounds)
@@ -89,7 +89,7 @@ warm_start_mode: "state_maturity" # "state_maturity" (Adaptive) | "fixed" (Legac
 temporal_min_samples: 300         # 300 gap observations for mature empirical Tukey fences
 behavioral_min_depth: 3           # Trajectory history depth for behavioral maturity
 warmup_weight_factor: 0.5         # Weight attenuation for warmup contributions
-alpha_downweight: 0.35            # Base weight attenuation for non-IID updates
+alpha_downweight: 0.65            # Base weight attenuation for non-IID updates
 K_drift_max: 10                   # Max consecutive downweights before threshold escalation
 delta_theta_step: 0.05            # Self-threshold penalty step per consecutive downweight
 delta_theta_max: 0.25             # Maximum total threshold penalty
