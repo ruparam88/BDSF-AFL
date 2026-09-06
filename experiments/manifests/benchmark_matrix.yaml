@@ -4,7 +4,7 @@ experiment:
   dataset: "MNIST"
   rounds: 50
   batch_size: 32
-  local_epochs: 1
+  local_epochs: 3
   lr: 0.01
   local_lr: 0.01
   lr_schedule: "cosine"
@@ -14,8 +14,8 @@ experiment:
   M: 30
   K_base: 50
   K_ref: 10
-  eta: 0.01
-  server_momentum: 0.90
+  eta: 0.5
+  server_momentum: 0.95
   theta_self: 0.30
   theta_self_mature: 0.30
   theta_floor: 0.40
