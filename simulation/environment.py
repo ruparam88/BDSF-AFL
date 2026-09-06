@@ -185,6 +185,8 @@ class SimulationEnvironment:
         byz_ids = set(range(num_byz))
         honest_ids = set(range(num_byz, self.N))
         
+        print(f"  >> Identified {num_byz} malicious (Byzantine) clients: {list(byz_ids)}")
+        
         # 4. Logger setup
         run_id = self.config.get("run_id", f"{self.config.get('algorithm_name', 'BDSF_AFL')}_{self.attack_type}_{self.seed}")
         logger = BDSFLogger(run_id=run_id, config=self.config)
@@ -424,6 +426,11 @@ class SimulationEnvironment:
                         f"| elapsed={elapsed:.1f}s",
                         flush=True,
                     )
+                    
+                    suspicion_scores = server.decision_engine.suspicion_scores
+                    if suspicion_scores:
+                        top_suspicious = sorted(suspicion_scores.items(), key=lambda x: x[1], reverse=True)[:5]
+                        print(f"    [!] Top Suspicious Clients: {[f'C{cid}({score:.2f})' for cid, score in top_suspicious]}")
 
                     # Reputation snapshots — once per eval cycle (Bug 3 fix)
                     for cid in range(N):
